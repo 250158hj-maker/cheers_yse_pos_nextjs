@@ -45,12 +45,12 @@ cheers_yse_pos/
 │   └── api/                  # APIエンドポイント（route.ts）
 ├── lib/                      # ビジネスロジック（db.ts・auth.ts・validations/）
 ├── prisma/schema.prisma      # テーブル定義・マイグレーション管理
-├── middleware.ts             # 認証ガード・ロール別リダイレクト
+├── proxy.ts             # 認証ガード・ロール別リダイレクト
 └── .env.local                # 環境変数（Git管理外・絶対にコミットしない）
 ```
 
 - ビジネスロジックは `lib/` に置く。`app/` のファイルに直接書かない
-- 認証ガードは `middleware.ts` に集約する。各 `page.tsx` に認証チェックを書かない
+- 認証ガードは `proxy.ts` に集約する。各 `page.tsx` に認証チェックを書かない
 - DB操作は `lib/db.ts` のPrismaクライアントを通して行う。直接クエリを `app/` に書かない
 
 ---
