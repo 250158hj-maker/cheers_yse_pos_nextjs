@@ -1,0 +1,36 @@
+# 依存関係（コンテナ内で別途インストールするため）
+node_modules
+
+# ビルド成果物・キャッシュ
+.next
+out
+build
+*.tsbuildinfo
+
+# 環境変数（シークレット混入防止）
+.env
+.env.*
+!.env.example
+
+# Git
+.git
+.gitignore
+
+# Docker関連ファイル自体
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# エディタ・OS
+.vscode
+.idea
+.DS_Store
+
+# ログ
+npm-debug.log*
+yarn-debug.log*
+
+# ドキュメント（イメージに不要）
+README.md
+docs
+CLAUDE.md

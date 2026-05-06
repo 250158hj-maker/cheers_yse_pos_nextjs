@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: cheers_yse_pos_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cheers_yse_pos
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      # DB が接続を受け付けられる状態かを pg_isready で確認
+      # app コンテナはこのヘルスチェック成功を待ってから起動する
+      test: ["CMD-SHELL", "pg_isready -U postgres -d cheers_yse_pos"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cheers_yse_pos_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      # ソースコードをバインドマウントしホットリロードを有効化
+      - .:/app
+      # node_modules はコンテナ内のものを保持（ホストの空ディレクトリで上書きさせない）
+      - app_node_modules:/app/node_modules
+      # .next も名前付きボリュームに分離（WSL2 のバインドマウントIOを回避）
+      - app_next_cache:/app/.next
+    env_file:
+      - .env.local
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
+  app_node_modules:
+  app_next_cache:
