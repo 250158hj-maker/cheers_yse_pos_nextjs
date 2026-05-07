@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int     @id @default(autoincrement())
+  name     String
+  loginId  String  @unique @map("login_id")
+  password String
+  isAdmin  Boolean @default(false) @map("is_admin")
+
+  sales    Sale[]
+
+  @@map("users")
+}
+
+model Category {
+  id       Int       @id @default(autoincrement())
+  name     String    @unique
+
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id         Int        @id @default(autoincrement())
+  name       String
+  price      Int
+  isTakeout  Boolean    @default(false) @map("is_takeout")
+  categoryId Int        @map("category_id")
+
+  category   Category   @relation(fields: [categoryId], references: [id])
+  saleItems  SaleItem[]
+
+  @@map("products")
+}
+
+model Sale {
+  id          Int        @id @default(autoincrement())
+  storeId     Int        @map("store_id")
+  receiptNo   String     @map("receipt_no")
+  totalAmount Int        @map("total_amount")
+  taxRate     Decimal    @map("tax_rate") @db.Decimal(4, 3)
+  soldAt      DateTime   @default(now()) @map("sold_at")
+
+  store       User       @relation(fields: [storeId], references: [id])
+  items       SaleItem[]
+
+  @@map("sales")
+}
+
+model SaleItem {
+  id          Int     @id @default(autoincrement())
+  saleId      Int     @map("sale_id")
+  productId   Int     @map("product_id")
+  productName String  @map("product_name")
+  unitPrice   Int     @map("unit_price")
+  quantity    Int
+
+  sale        Sale    @relation(fields: [saleId], references: [id])
+  product     Product @relation(fields: [productId], references: [id])
+
+  @@map("sale_items")
+}
