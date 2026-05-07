@@ -139,12 +139,12 @@ const price = 0;
 
 ## 認証・セキュリティルール
 
-- 認証セッションの取得はサーバーサイドで `getServerSession()` を使う
-- ミドルウェアでのロール判定：
+- 認証セッションの取得はサーバーサイドで Auth.js v5 の `auth()` 関数を使う（`lib/auth.ts` からエクスポート）
+- `proxy.ts` でのロール判定：
   - スタッフロール → `/register` のみアクセス可
   - 管理者ロール → `/admin` 以下のみアクセス可
   - 未認証 → `/`（ログイン画面）にリダイレクト
-- クライアントサイドで認証チェックを行わない（ミドルウェアに集約する）
+- クライアントサイドで認証チェックを行わない（`proxy.ts` に集約する）
 
 ---
 
@@ -162,9 +162,11 @@ const price = 0;
 
 ```
 DATABASE_URL=
-NEXTAUTH_SECRET=
-NEXTAUTH_URL=
+AUTH_SECRET=
 ```
+
+- `AUTH_SECRET` は `openssl rand -base64 32` 等で生成する
+- Auth.js v5 では `AUTH_URL` は通常省略可。Docker など `localhost` 以外のホスト名で動かす場合のみ `AUTH_TRUST_HOST=true` を追加する
 
 ---
 
